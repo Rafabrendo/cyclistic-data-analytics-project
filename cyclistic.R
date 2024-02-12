@@ -48,3 +48,27 @@ cyclistic_april_to_april <- data.frame(rbind(cyclistic_202004, cyclistic_202005,
                                              cyclistic_202008, cyclistic_202009, cyclistic_202010, cyclistic_202011, 
                                              cyclistic_202012, cyclistic_202101, cyclistic_202102, cyclistic_202103,
                                              cyclistic_202104))
+
+#Limpeza e Tratamento dos Dados para analise
+
+#Visualizando as 6 primeiras linhas do conjunto de dados
+head(cyclistic_april_to_april)
+
+#Visualizando as últimas linhas do conjunto de dados
+tail(cyclistic_april_to_april)
+
+#Mostra a estrutura do conjunto de dados
+str(cyclistic_april_to_april)
+
+#Fornece um resumo estatístico dos dados
+summary(cyclistic_april_to_april)
+
+#Abre uma visualização interativa dos dados em uma janela separada
+View(cyclistic_april_to_april)
+
+# Identificando os nomes das colunas e o número de linhas antes da limpeza e tratamento:
+colnames(cyclistic_april_to_april)
+
+numero_de_linhas1 <- nrow(cyclistic_april_to_april)
+print(numero_de_linhas1) #3826978
+
