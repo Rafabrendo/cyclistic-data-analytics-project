@@ -72,3 +72,18 @@ colnames(cyclistic_april_to_april)
 numero_de_linhas1 <- nrow(cyclistic_april_to_april)
 print(numero_de_linhas1) #3826978
 
+#Classificar e filtrar
+#Primeiro: Apagando linhas e colunas 
+
+#Verificando quais linhas tem valor null
+linhas_nulas <- which(rowSums(is.na(cyclistic_april_to_april))> 0)
+print(linhas_nulas)
+
+cyclistic_april_to_april_no_null <- na.omit(cyclistic_april_to_april)
+linhas_nulas_v2 <- which(rowSums(is.na(cyclistic_april_to_april_no_null))>0)
+print(linhas_nulas_v2) #0
+
+numero_de_linhas2 <- nrow(cyclistic_april_to_april_no_null)
+print(numero_de_linhas2) #3592898
+
+
