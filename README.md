@@ -20,11 +20,11 @@ A Cyclistic é um programa de compartilhamento de bicicletas com mais de 5.800 b
 ## Cenário:
 Eu sou um analista de dados júnior que trabalha na equipe de analistas de marketing da Cyclistic, uma empresa de compartilhamento de bicicletas em Chicago. O diretor de marketing acredita que o sucesso futuro da empresa depende da maximização do número de planos anuais contratados. Aa partir desses insights, sua equipe criará uma nova estratégia de marketing para converter passageiros casuais em membros anuais. Mas, primeiro, os executivos da Cyclistic devem aprovar suas recomendações que, portanto, devem ser apoiadas com insights de dados  convincentes e visualizações de dados profissionais.
 
-<h2 id="partes_interessadas"> Partes Interessadas:</h2>
+<h2 id="partes_interessadas"> Personagens e Partes Interessadas:</h2>
 <ul>
     <li><strong>Cyclistic:</strong> Um programa de compartilhamento de bicicletas que conta com mais de 5.800 bicicletas e 600 estações de compartilhamento. A Cyclistic se diferencia por também oferecer bicicletas reclináveis, triciclos manuais e bicicletas de carga, tornando o compartilhamento de bicicletas mais inclusivo
-    <li><strong>Lily Moreno:</strong>
-    <li><strong>Equipe de análise de marketing da Cyclistic:</strong>
-    <li><strong>Equipe executiva da Cyclistic:</strong>
+    <li><strong>Lily Moreno:</strong> Diretora de marketing e sua gerente. Lily é responsável pelo desenvolvimento de campanhas e iniciativas de proomoção do programa de compartilhamento de bicicletas. As campanhas podem incluir e-mail, mídias sociais e outros canais.
+    <li><strong>Equipe de análise de marketing da Cyclistic:</strong> Uma equipe de analistas de dados responsáveis por coletar, analisar e relatar dados que ajudam a orientar a estratégia de marketiing da Cyclistic.
+    <li><strong>Equipe executiva da Cyclistic:</strong> A equipe executiva notoriamente detalhista decidirá se aprova o programa de marketing recomendado,
 </ul>
 
