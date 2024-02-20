@@ -1,6 +1,5 @@
 library(tidyverse)
-library(skimr)
-library(janitor)
+
 
 #2ª etapa: Identificando como os dados estão organizados
 
@@ -73,7 +72,7 @@ numero_de_linhas1 <- nrow(cyclistic_april_to_april)
 print(numero_de_linhas1) #3826978
 
 #Classificar e filtrar
-#Primeiro: Apagando linhas e colunas 
+#Primeiro: Apagando linhas e colunas com valor null
 
 #Verificando quais linhas tem valor null
 linhas_nulas <- which(rowSums(is.na(cyclistic_april_to_april))> 0)
@@ -86,4 +85,66 @@ print(linhas_nulas_v2) #0
 numero_de_linhas2 <- nrow(cyclistic_april_to_april_no_null)
 print(numero_de_linhas2) #3592898
 
+#verificando se ainda tem linhas na
+cyclistic_april_to_april_no_null %>% 
+  select(ride_id, rideable_type, started_at, ended_at, start_station_name, 
+         start_station_id, end_station_name, end_station_id, start_lat, start_lng, member_casual) %>% 
+  filter(!complete.cases(.))
 
+#Tornando a visualização mais fácil 
+as_tibble(cyclistic_april_to_april_no_null)
+
+# Criando a coluna "data" a partir da coluna "started_at"
+cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% mutate(data = as.Date(started_at))
+
+head(cyclistic_april_to_april_no_null$data)
+
+cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
+  mutate(comeco_passeio = paste(hour(started_at), minute(started_at), second(started_at), sep = ":")
+         )
+
+as_tibble(cyclistic_april_to_april_no_null$comeco_passeio) #O tipo de value é chr
+as_tibble(cyclistic_april_to_april_no_null$fim_passeio) #O tipo de value é chr
+
+#Preciso converter para data/hora e fazer a diferença para achar a duração do passeio
+
+
+cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
+  mutate(fim_passeio = paste(hour(ended_at), minute(ended_at), second(ended_at), sep = ":")
+  )
+
+cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
+  mutate(duracao_passeio = as.character(as.POSIXct(fim_passeio, format="%H:%M:%S") - as.POSIXct(comeco_passeio, format="%H:%M:%S")))
+
+cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
+  mutate(duracao_passeio = difftime(as.POSIXct(fim_passeio, format="%H:%M:%S"), 
+                                    as.POSIXct(comeco_passeio, format="%H:%M:%S"), 
+                                    units = "sec"))
+
+head(cyclistic_april_to_april_no_null$duracao_passeio)
+as_tibble(cyclistic_april_to_april_no_null$duracao_passeio)
+
+View(cyclistic_april_to_april_no_null)
+
+#Convertendo para o tipo numerico
+cyclistic_april_to_april_no_null$duracao_passeio <- as.numeric(cyclistic_april_to_april_no_null$duracao_passeio)
+as_tibble(cyclistic_april_to_april_no_null$duracao_passeio)
+
+#Formatando para HH:MM:SS
+#Vou utilizar uma função propria
+
+formatar_segundo <- function(segundos){
+  horas <- floor(segundos / 3600)
+  minutos <- floor((segundos %% 3600)/60)
+  segundos_restantes <- floor(segundos %% 60)
+  
+  #Criando a string formatada
+  resultado <- gsub("\\s+", "", as.character(paste(horas,":",minutos,":",segundos_restantes)))
+  
+  return(resultado)
+  
+}
+
+#Dia da semana
+cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
+  mutate(dia_semana = weekdays(ymd(data)))
