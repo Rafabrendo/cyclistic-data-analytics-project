@@ -1,7 +1,7 @@
 library(tidyverse)
 
 
-#2ª etapa: Identificando como os dados estão organizados
+#Identificando como os dados estão organizados
 
 #Importando os dados
 cyclistic_202004 <- read_csv("/home/rafael/Documentos/dados daa cyclistic/dados/202004-divvy-tripdata.csv")
@@ -94,25 +94,23 @@ cyclistic_april_to_april_no_null %>%
 #Tornando a visualização mais fácil 
 as_tibble(cyclistic_april_to_april_no_null)
 
-# Criando a coluna "data" a partir da coluna "started_at"
-cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% mutate(data = as.Date(started_at))
-
-head(cyclistic_april_to_april_no_null$data)
+#head(cyclistic_april_to_april_no_null$data)
 
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(comeco_passeio = paste(hour(started_at), minute(started_at), second(started_at), sep = ":")
          )
 
-as_tibble(cyclistic_april_to_april_no_null$comeco_passeio) #O tipo de value é chr
-as_tibble(cyclistic_april_to_april_no_null$fim_passeio) #O tipo de value é chr
-
-#Preciso converter para data/hora e fazer a diferença para achar a duração do passeio
-
-
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(fim_passeio = paste(hour(ended_at), minute(ended_at), second(ended_at), sep = ":")
   )
 
+as_tibble(cyclistic_april_to_april_no_null$comeco_passeio) #O tipo de value é chr
+as_tibble(cyclistic_april_to_april_no_null$fim_passeio) #O tipo de value é chr
+
+#Preciso converter para data/hora e fazer a diferença para achar a duração do passeio
+#Utiliza o as.POSIXct para converter objetos para o tipo de data/hora e usa-los com difftime
+
+#Esse é um jeito de fazer, porém eu preferir usar o difftime porque eu sei que vai me dar o resultado em sec
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(duracao_passeio = as.character(as.POSIXct(fim_passeio, format="%H:%M:%S") - as.POSIXct(comeco_passeio, format="%H:%M:%S")))
 
@@ -121,18 +119,21 @@ cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>%
                                     as.POSIXct(comeco_passeio, format="%H:%M:%S"), 
                                     units = "sec"))
 
-head(cyclistic_april_to_april_no_null$duracao_passeio)
-as_tibble(cyclistic_april_to_april_no_null$duracao_passeio)
+duracao_passeio_v2 <- difftime(as.POSIXct(cyclistic_april_to_april_no_null$fim_passeio, format="%H:%M:%S"), 
+                                    as.POSIXct(cyclistic_april_to_april_no_null$comeco_passeio, format="%H:%M:%S"), 
+                                    units = "secs")
 
-View(cyclistic_april_to_april_no_null)
+#Retirando os valores negativos de duracao_passeio
+cyclistic_april_to_april_no_null <- subset(cyclistic_april_to_april_no_null, as.numeric(duracao_passeio) > 0)
 
-#Convertendo para o tipo numerico
-cyclistic_april_to_april_no_null$duracao_passeio <- as.numeric(cyclistic_april_to_april_no_null$duracao_passeio)
-as_tibble(cyclistic_april_to_april_no_null$duracao_passeio)
+#Linhas da cyclistic_april_to_april_no_null
+nrow(cyclistic_april_to_april_no_null)
+
+#Retirando os valores negativos
+duracao_passeio_v2 <- subset(as.numeric(duracao_passeio), duracao_passeio > 0)
 
 #Formatando para HH:MM:SS
 #Vou utilizar uma função propria
-
 formatar_segundo <- function(segundos){
   horas <- floor(segundos / 3600)
   minutos <- floor((segundos %% 3600)/60)
@@ -144,6 +145,13 @@ formatar_segundo <- function(segundos){
   return(resultado)
   
 }
+
+cyclistic_april_to_april_no_null$duracao_passeio <- formatar_segundo(duracao_passeio_v2)
+
+
+# Criando a coluna "data" a partir da coluna "started_at"
+cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% mutate(data = as.Date(started_at))
+
 
 #Dia da semana
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
