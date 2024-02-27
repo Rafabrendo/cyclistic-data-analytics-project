@@ -1,4 +1,6 @@
 library(tidyverse)
+library(skimr)
+library(geosphere)
 
 
 #Identificando como os dados estão organizados
@@ -74,7 +76,7 @@ print(numero_de_linhas1) #3826978
 #Classificar e filtrar
 #Primeiro: Apagando linhas e colunas com valor null
 
-#Verificando quais linhas tem valor null
+#Verificando quais linhas tem valor null. Vai retornar os indices das linhas com valor null
 linhas_nulas <- which(rowSums(is.na(cyclistic_april_to_april))> 0)
 print(linhas_nulas)
 
@@ -96,10 +98,12 @@ as_tibble(cyclistic_april_to_april_no_null)
 
 #head(cyclistic_april_to_april_no_null$data)
 
+#Criando a coluna comeco_passeio
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(comeco_passeio = paste(hour(started_at), minute(started_at), second(started_at), sep = ":")
          )
 
+#Criando a coluna fim_passeio
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(fim_passeio = paste(hour(ended_at), minute(ended_at), second(ended_at), sep = ":")
   )
@@ -113,7 +117,7 @@ as_tibble(cyclistic_april_to_april_no_null$fim_passeio) #O tipo de value é chr
 #Esse é um jeito de fazer, porém eu preferir usar o difftime porque eu sei que vai me dar o resultado em sec
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(duracao_passeio = as.character(as.POSIXct(fim_passeio, format="%H:%M:%S") - as.POSIXct(comeco_passeio, format="%H:%M:%S")))
-
+#Criando a coluna duracao_passeio
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(duracao_passeio = difftime(as.POSIXct(fim_passeio, format="%H:%M:%S"), 
                                     as.POSIXct(comeco_passeio, format="%H:%M:%S"), 
@@ -127,10 +131,10 @@ duracao_passeio_v2 <- difftime(as.POSIXct(cyclistic_april_to_april_no_null$fim_p
 cyclistic_april_to_april_no_null <- subset(cyclistic_april_to_april_no_null, as.numeric(duracao_passeio) > 0)
 
 #Linhas da cyclistic_april_to_april_no_null
-nrow(cyclistic_april_to_april_no_null)
+nrow(cyclistic_april_to_april_no_null) #3553836
 
 #Retirando os valores negativos
-duracao_passeio_v2 <- subset(as.numeric(duracao_passeio), duracao_passeio > 0)
+duracao_passeio_v2 <- subset(as.numeric(duracao_passeio_v2), duracao_passeio_v2 > 0)
 
 #Formatando para HH:MM:SS
 #Vou utilizar uma função propria
@@ -145,7 +149,7 @@ formatar_segundo <- function(segundos){
   return(resultado)
   
 }
-
+#Formatando a coluana duracao_passeio
 cyclistic_april_to_april_no_null$duracao_passeio <- formatar_segundo(duracao_passeio_v2)
 
 
@@ -153,6 +157,33 @@ cyclistic_april_to_april_no_null$duracao_passeio <- formatar_segundo(duracao_pas
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% mutate(data = as.Date(started_at))
 
 
-#Dia da semana
+#Dia da semana. Criando a coluna dia_semana
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(dia_semana = weekdays(ymd(data)))
+
+#transformando member_casual em fator
+
+cyclistic_april_to_april_no_null$member_casual <- as.factor(cyclistic_april_to_april_no_null$member_casual)
+
+View(cyclistic_april_to_april_no_null)
+
+levels(cyclistic_april_to_april_no_null$member_casual)
+
+#Estatísticas resumidas dos dados
+skim(cyclistic_april_to_april_no_null$duracao_passeio)
+
+#Criando a coluna km_percorridos usando as colunas start_lng, start_lat, end_lng e end_lat
+#Vou utilizar a fórmula de Vincenty porque é mais precisa, para calcular a distância
+cyclistic_april_to_april_no_null$km_percorridos <- distVincentySphere(
+  cyclistic_april_to_april_no_null[, c("start_lng", "start_lat")],
+  cyclistic_april_to_april_no_null[, c("end_lng", "end_lat")]
+) / 1000 
+#Essa formula me retorna a distancia em metros, daí eu dividir por 1000 para transformar em km
+
+#média, mediana, máximo e minimo de duração de passeio dos ciclistas membros. Usando aggregate
+
+aggregate(duracao_passeio_v2 ~ cyclistic_april_to_april_no_null$member_casual, FUN = mean)
+
+mean(as.numeric(cyclistic_april_to_april_no_null$duracao_passeio))
+
+#Obs.: Mudar o duracao_passeio para numeric
