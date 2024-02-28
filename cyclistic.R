@@ -41,7 +41,7 @@ str(cyclistic_202104)
 #Para que um cruzamento seja possível, os dois ou mais conjuntos de dados precisam ter pelo menos um campo em comum.
 #Nesse caso, os campos estão em comum e por isso vou unir os dados
 
-# rbind() Esta função é usada para combinar data fraames ou matrizes por linhas
+# rbind() Esta função é usada para combinar data frames ou matrizes por linhas
 
 #Unindo os dados
 
@@ -136,22 +136,6 @@ nrow(cyclistic_april_to_april_no_null) #3553836
 #Retirando os valores negativos
 duracao_passeio_v2 <- subset(as.numeric(duracao_passeio_v2), duracao_passeio_v2 > 0)
 
-#Formatando para HH:MM:SS
-#Vou utilizar uma função propria
-formatar_segundo <- function(segundos){
-  horas <- floor(segundos / 3600)
-  minutos <- floor((segundos %% 3600)/60)
-  segundos_restantes <- floor(segundos %% 60)
-  
-  #Criando a string formatada
-  resultado <- gsub("\\s+", "", as.character(paste(horas,":",minutos,":",segundos_restantes)))
-  
-  return(resultado)
-  
-}
-#Formatando a coluana duracao_passeio
-cyclistic_april_to_april_no_null$duracao_passeio <- formatar_segundo(duracao_passeio_v2)
-
 
 # Criando a coluna "data" a partir da coluna "started_at"
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% mutate(data = as.Date(started_at))
@@ -180,10 +164,45 @@ cyclistic_april_to_april_no_null$km_percorridos <- distVincentySphere(
 ) / 1000 
 #Essa formula me retorna a distancia em metros, daí eu dividir por 1000 para transformar em km
 
-#média, mediana, máximo e minimo de duração de passeio dos ciclistas membros. Usando aggregate
+#média, mediana, máximo e minimo de duração de passeio. Usando o aggregate que me retorna o  resultado dos ciclistas casual e member
+aggregate(as.numeric(cyclistic_april_to_april_no_null$duracao_passeio) ~ cyclistic_april_to_april_no_null$member_casual, FUN = mean)
+aggregate(as.numeric(cyclistic_april_to_april_no_null$duracao_passeio) ~ cyclistic_april_to_april_no_null$member_casual, FUN = median)
+aggregate(as.numeric(cyclistic_april_to_april_no_null$duracao_passeio) ~ cyclistic_april_to_april_no_null$member_casual, FUN = max)
+aggregate(as.numeric(cyclistic_april_to_april_no_null$duracao_passeio) ~ cyclistic_april_to_april_no_null$member_casual, FUN = min)
 
-aggregate(duracao_passeio_v2 ~ cyclistic_april_to_april_no_null$member_casual, FUN = mean)
+#Outro jeito de fazer
+mean(cyclistic_april_to_april_no_null$duracao_passeio[cyclistic_april_to_april_no_null$member_casual == "casual"]) #media para os ciclistas casual
+mean(cyclistic_april_to_april_no_null$duracao_passeio[cyclistic_april_to_april_no_null$member_casual == "member"])  #media para os ciclistas membe
 
-mean(as.numeric(cyclistic_april_to_april_no_null$duracao_passeio))
+#média, mediana, máximo e minimo de de km percorridos, independete do tipo de usuario
+aggregate(as.numeric(cyclistic_april_to_april_no_null$km_percorridos) ~ cyclistic_april_to_april_no_null$member_casual, FUN = mean)
+aggregate(as.numeric(cyclistic_april_to_april_no_null$km_percorridos) ~ cyclistic_april_to_april_no_null$member_casual, FUN = median)
+aggregate(as.numeric(cyclistic_april_to_april_no_null$km_percorridos) ~ cyclistic_april_to_april_no_null$member_casual, FUN = max)
+aggregate(as.numeric(cyclistic_april_to_april_no_null$km_percorridos) ~ cyclistic_april_to_april_no_null$member_casual, FUN = min)
 
-#Obs.: Mudar o duracao_passeio para numeric
+#moda da semana, independente do tipo dos membros(casual ou membro)
+tabela_freq_member <- table(cyclistic_april_to_april_no_null$dia_semana[cyclistic_april_to_april_no_null$member_casual])
+tabela_freq_casual <- table(cyclistic_april_to_april_no_null$dia_semana[cyclistic_april_to_april_no_null$member_casual == "casual"])
+moda_v1 <- names((tabela_freq_member)[which.max(tabela_freq_member)])
+moda_v2 <- names((tabela_freq_casual)[which.max(tabela_freq_casual)])
+print(moda_v1) #sábado
+print(moda_v2) #sábado
+
+
+
+#Formatando para HH:MM:SS
+#Vou utilizar uma função propria
+formatar_segundo <- function(segundos){
+  horas <- floor(segundos / 3600)
+  minutos <- floor((segundos %% 3600)/60)
+  segundos_restantes <- floor(segundos %% 60)
+  
+  #Criando a string formatada
+  resultado <- as.numeric(format(as.POSIXct(gsub("\\s+", "", as.character(paste(horas,":",minutos,":",segundos_restantes))), format="%H:%M:%S"), "%H:%M:%S"))
+  
+  return(resultado)
+  
+}
+#Formatando a coluana duracao_passeio
+cyclistic_april_to_april_no_null$duracao_passeio <- formatar_segundo(duracao_passeio_v2)
+
