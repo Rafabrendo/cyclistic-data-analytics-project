@@ -181,14 +181,33 @@ aggregate(as.numeric(cyclistic_april_to_april_no_null$km_percorridos) ~ cyclisti
 aggregate(as.numeric(cyclistic_april_to_april_no_null$km_percorridos) ~ cyclistic_april_to_april_no_null$member_casual, FUN = min)
 
 #moda da semana, independente do tipo dos membros(casual ou membro)
-tabela_freq_member <- table(cyclistic_april_to_april_no_null$dia_semana[cyclistic_april_to_april_no_null$member_casual])
+#Numero de viagens para usuario por dia da semana
+tabela_freq_member <- table(cyclistic_april_to_april_no_null$dia_semana[cyclistic_april_to_april_no_null$member_casual == "member"])
 tabela_freq_casual <- table(cyclistic_april_to_april_no_null$dia_semana[cyclistic_april_to_april_no_null$member_casual == "casual"])
+#calculando a moda 
 moda_v1 <- names((tabela_freq_member)[which.max(tabela_freq_member)])
 moda_v2 <- names((tabela_freq_casual)[which.max(tabela_freq_casual)])
 print(moda_v1) #sábado
+print(tabela_freq_member)
+print(tabela_freq_casual)
 print(moda_v2) #sábado
 
+#Frequencia de casual e member
+frequencia <- table(member_casual = cyclistic_april_to_april_no_null$member_casual)
+view(frequencia)
+print(frequencia)
 
+#Vai me retornar a proporção de usuarios membros e usuarios casuais
+porcentagem <- round(prop.table(frequencia) * 100, 2)
+print(str(porcentagem))
+
+#data frame com os percentuais
+percentuais_grafico <- data.frame(percentual = porcentagem) %>%
+  colnames(percentuais_grafico) %>% c("member_casual", "frequencia")
+  
+
+print(str(percentuais_grafico))
+View(percentuais_grafico)
 
 #Formatando para HH:MM:SS
 #Vou utilizar uma função propria
@@ -205,4 +224,5 @@ formatar_segundo <- function(segundos){
 }
 #Formatando a coluana duracao_passeio
 cyclistic_april_to_april_no_null$duracao_passeio <- formatar_segundo(duracao_passeio_v2)
+
 
