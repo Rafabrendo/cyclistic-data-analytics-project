@@ -189,8 +189,31 @@ moda_v1 <- names((tabela_freq_member)[which.max(tabela_freq_member)])
 moda_v2 <- names((tabela_freq_casual)[which.max(tabela_freq_casual)])
 print(moda_v1) #sábado
 print(tabela_freq_member)
+#domingo  quarta  quinta  sábado segunda   sexta   terça 
+#272539  310414  307698  327013  276227  319257  296321 
+
 print(tabela_freq_casual)
+#domingo  quarta  quinta  sábado segunda   sexta   terça 
+#269357  156487  163943  338144  153732  210811  151893
+
 print(moda_v2) #sábado
+
+#grafico de frequencia
+tabela_freq_casual <- data.frame(tabela_freq_casual)
+View(tabela_freq_casual)
+class(tabela_freq_casual)
+colnames(tabela_freq_casual) <- c("weekdays", "frequencia")
+
+ggplot(data = tabela_freq_casual, aes(x = weekdays, y = frequencia, fill = frequencia))+
+  geom_bar(stat = "identity",  position = "dodge") +
+  ggtitle("Frequencia de viagens para usuários casuais")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  ylab("Frequência de Uso")+
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+  
+
+#ggplot(data = tabela_freq_casual, aes(x = frequencia))+
+#  geom_bar()
 
 #Frequencia de casual e member
 frequencia <- table(member_casual = cyclistic_april_to_april_no_null$member_casual)
@@ -202,12 +225,17 @@ porcentagem <- round(prop.table(frequencia) * 100, 2)
 print(str(porcentagem))
 
 #data frame com os percentuais
-percentuais_grafico <- data.frame(percentual = porcentagem) %>%
-  colnames(percentuais_grafico) %>% c("member_casual", "frequencia")
-  
-
+percentuais_grafico <- data.frame(percentual = porcentagem)
+colnames(percentuais_grafico) <- c("member_casual", "frequencia")
 print(str(percentuais_grafico))
 View(percentuais_grafico)
+
+ggplot(percentuais_grafico, aes(x = member_casual, y = frequencia, fill=member_casual))+
+  geom_bar(stat = "identity", position = "dodge")+
+  labs(x = "Tipo de Ciclista", y = "Pecentual (%)")+
+  theme_minimal() +
+  guides(fill = guide_legend(title = "Tipo de Ciclista"))
+
 
 #Formatando para HH:MM:SS
 #Vou utilizar uma função propria
