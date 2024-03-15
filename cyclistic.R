@@ -77,15 +77,15 @@ print(numero_de_linhas1) #3826978
 #Primeiro: Apagando linhas e colunas com valor null
 
 #Verificando quais linhas tem valor null. Vai retornar os indices das linhas com valor null
-linhas_nulas <- which(rowSums(is.na(cyclistic_april_to_april))> 0)
+which(rowSums(is.na(cyclistic_april_to_april))> 0)
 print(linhas_nulas)
 
 cyclistic_april_to_april_no_null <- na.omit(cyclistic_april_to_april)
 linhas_nulas_v2 <- which(rowSums(is.na(cyclistic_april_to_april_no_null))>0)
 print(linhas_nulas_v2) #0
 
-numero_de_linhas2 <- nrow(cyclistic_april_to_april_no_null)
-print(numero_de_linhas2) #3592898
+nrow(cyclistic_april_to_april_no_null)
+#3592898
 
 #verificando se ainda tem linhas na
 cyclistic_april_to_april_no_null %>% 
@@ -96,7 +96,7 @@ cyclistic_april_to_april_no_null %>%
 #Tornando a visualização mais fácil 
 as_tibble(cyclistic_april_to_april_no_null)
 
-#head(cyclistic_april_to_april_no_null$data)
+head(cyclistic_april_to_april_no_null$data)
 
 #Criando a coluna comeco_passeio
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
@@ -113,7 +113,6 @@ as_tibble(cyclistic_april_to_april_no_null$fim_passeio) #O tipo de value é chr
 
 #Preciso converter para data/hora e fazer a diferença para achar a duração do passeio
 #Utiliza o as.POSIXct para converter objetos para o tipo de data/hora e usa-los com difftime
-
 #Esse é um jeito de fazer, porém eu preferir usar o difftime porque eu sei que vai me dar o resultado em sec
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(duracao_passeio = as.character(as.POSIXct(fim_passeio, format="%H:%M:%S") - as.POSIXct(comeco_passeio, format="%H:%M:%S")))
@@ -121,14 +120,22 @@ cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>%
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
   mutate(duracao_passeio = difftime(as.POSIXct(fim_passeio, format="%H:%M:%S"), 
                                     as.POSIXct(comeco_passeio, format="%H:%M:%S"), 
-                                    units = "sec"))
+                                    units = "sec")/60)
 
 duracao_passeio_v2 <- difftime(as.POSIXct(cyclistic_april_to_april_no_null$fim_passeio, format="%H:%M:%S"), 
                                     as.POSIXct(cyclistic_april_to_april_no_null$comeco_passeio, format="%H:%M:%S"), 
                                     units = "secs")
 
+#Criando hora a partir do comeco_passeio
+cyclistic_april_to_april_no_null$hora <- as.numeric(gsub(":", "", substr(cyclistic_april_to_april_no_null$comeco_passeio, 1, 2)))
+
+#Converter para numeric
 #Retirando os valores negativos de duracao_passeio
-cyclistic_april_to_april_no_null <- subset(cyclistic_april_to_april_no_null, as.numeric(duracao_passeio) > 0)
+#Posso usar o subset ou manipular um vetor dentro do data frame 
+#cyclistic_april_to_april_no_null <- as.numeric(subset(cyclistic_april_to_april_no_null, as.numeric(duracao_passeio) > 0))
+cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null[as.numeric(cyclistic_april_to_april_no_null$duracao_passeio) > 0, ]
+cyclistic_april_to_april_no_null$duracao_passeio <- as.numeric(cyclistic_april_to_april_no_null$duracao_passeio)
+str(cyclistic_april_to_april_no_null$duracao_passeio)
 
 #Linhas da cyclistic_april_to_april_no_null
 nrow(cyclistic_april_to_april_no_null) #3553836
@@ -146,7 +153,6 @@ cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>%
   mutate(dia_semana = weekdays(ymd(data)))
 
 #transformando member_casual em fator
-
 cyclistic_april_to_april_no_null$member_casual <- as.factor(cyclistic_april_to_april_no_null$member_casual)
 
 View(cyclistic_april_to_april_no_null)
@@ -198,7 +204,8 @@ print(tabela_freq_casual)
 
 print(moda_v2) #sábado
 
-#grafico de frequencia
+
+#gráfico de frequência dos usuários casuais
 tabela_freq_casual <- data.frame(tabela_freq_casual)
 View(tabela_freq_casual)
 class(tabela_freq_casual)
@@ -206,14 +213,58 @@ colnames(tabela_freq_casual) <- c("weekdays", "frequencia")
 
 ggplot(data = tabela_freq_casual, aes(x = weekdays, y = frequencia, fill = frequencia))+
   geom_bar(stat = "identity",  position = "dodge") +
-  ggtitle("Frequencia de viagens para usuários casuais")+
-  theme(plot.title = element_text(hjust = 0.5))+
+  #ggtitle("Frequência de viagens para usuários casuais")
+  labs(title="Frequência de viagens para usuários casuais de 04/2020 - 04/2021",
+     caption="Dados coletados por Rafael Brendo")+
   ylab("Frequência de Uso")+
+  xlab("Dias da semana")+
   theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
-  
 
-#ggplot(data = tabela_freq_casual, aes(x = frequencia))+
-#  geom_bar()
+#gráfico de frequência dos usuários membros
+tabela_freq_member <- data.frame(tabela_freq_member)
+class(tabela_freq_member)
+View(tabela_freq_member)
+colnames(tabela_freq_member) <- c("weekdays", "frequencia")
+
+#Gráfico que mede a frequencia x dia da semana, para usuários membros 
+ggplot(data = tabela_freq_member, aes(x= weekdays, y= frequencia, fill=frequencia))+
+  geom_bar(stat = "identity", position = "dodge")+
+  #ggtitle("Frequência de viagens para usuários membros")+
+  labs(title="Frequência de viagens para usuários membros de 04/2020 - 04/2021",
+       caption="Dados coletados por Rafael Brendo")+
+  ylab("Frequência de Uso")+
+  xlab("Dias da semana")+
+  theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+
+#Demanda do de cada usuario por dia da semana 
+ggplot(data = cyclistic_april_to_april_no_null, aes(x = dia_semana, fill = member_casual))+
+  geom_bar(position = "dodge")+
+  scale_y_continuous(labels = scales::comma)+
+  labs(title = "Demanda de cada usuário por dia da semana", x = "Dia da semana", y = "NUmero de Passeios", fill = "Tipo de Ciclista", caption="Dados coletados por Rafael Brendo")+
+  theme_minimal()
+
+#Horario de cada passeio por usuário
+ggplot(data = cyclistic_april_to_april_no_null, aes(x = hora, fill = member_casual))+
+  geom_bar(position = "dodge")+
+  scale_y_continuous(labels = scales::comma)+# Usando scales::comma para formatar os rótulos dos valores
+  labs(x = "Hora", y = "Contagem")+
+  theme_minimal()
+
+media_membro_dia_da_semana_km__percorrido <- aggregate(km_percorridos ~ dia_semana + member_casual, data = cyclistic_april_to_april_no_null, FUN = mean)  
+#Media de Km percorridos por tipo de usuário
+ggplot(data = media_membro_dia_da_semana_km__percorrido, aes(x = dia_semana, y = km_percorridos, fill = member_casual))+
+  geom_bar(stat = "identity", position = "dodge")+
+  scale_y_continuous(labels = scales::comma)+
+  labs(x = "Dia da semana", y = "Km percorridos", title = "Média de km percorridos por dia da semana", fill= "Tipo de Ciclista")+
+  theme_minimal()
+
+#Km percorridos por tipo de usuário
+ggplot(data = cyclistic_april_to_april_no_null, aes(x = dia_semana, y = km_percorridos, fill = member_casual))+
+  geom_bar(stat = "identity", position = "dodge")+
+  scale_y_continuous(labels = scales::comma)+
+  labs(x = "Dia da semana", y = "Km percorridos", title = "Km percorridos por dia da semana", fill= "Tipo de Ciclista")+
+  theme_minimal()
+   
 
 #Frequencia de casual e member
 frequencia <- table(member_casual = cyclistic_april_to_april_no_null$member_casual)
@@ -224,7 +275,7 @@ print(frequencia)
 porcentagem <- round(prop.table(frequencia) * 100, 2)
 print(str(porcentagem))
 
-#data frame com os percentuais
+#transformando em data frame com os percentuais
 percentuais_grafico <- data.frame(percentual = porcentagem)
 colnames(percentuais_grafico) <- c("member_casual", "frequencia")
 print(str(percentuais_grafico))
@@ -232,9 +283,32 @@ View(percentuais_grafico)
 
 ggplot(percentuais_grafico, aes(x = member_casual, y = frequencia, fill=member_casual))+
   geom_bar(stat = "identity", position = "dodge")+
-  labs(x = "Tipo de Ciclista", y = "Pecentual (%)")+
+  labs(x = "Tipo de Ciclista", y = "Percentual (%)")+
   theme_minimal() +
   guides(fill = guide_legend(title = "Tipo de Ciclista"))
+
+#duracao_passeio_v2 <- round(duracao_passeio_v2)
+View(duracao_passeio_v2)
+media_membro_dia_da_semana <- aggregate(duracao_passeio ~ dia_semana + member_casual, data = cyclistic_april_to_april_no_null, FUN = mean)
+View(media_membro_dia_da_semana)
+
+
+# Gráfico de barras com a Média de duração do Passeio x Dia da Semana, relacionado ao Tipo de Usuário
+ggplot(media_membro_dia_da_semana, aes(x = dia_semana, y = duracao_passeio, fill= member_casual))+
+  geom_bar(stat = "identity", position = "dodge")+
+  labs(x = "Dia da Semana", y = "Tempo médio (minutos)", title ="Media de duração do passeio ", fill = "Tipo de Ciclista", 
+        caption="Dados coletados por Rafael Brendo")+
+        theme(plot.title = element_text(hjust = 0.5))
+ 
+media_tempo_por_usuario <- aggregate(duracao_passeio ~ member_casual, data = cyclistic_april_to_april_no_null, FUN = mean)
+
+ggplot(data = media_tempo_por_usuario, aes(x = member_casual, y = duracao_passeio, fill = member_casual))+
+  geom_bar(stat = "identity", position = "dodge")+
+  labs(title = "Media de duração do passeio por tipo de ciclista", y = "Tempo Medio(minutos)", caption="Dados coletados por Rafael Brendo")+
+  guides(fill = guide_legend(title = "Tipo de Ciclista"))+
+  theme(axis.title.x = element_blank(), plot.title = element_text(hjust = 0.5))
+  
+
 
 
 #Formatando para HH:MM:SS
@@ -252,5 +326,3 @@ formatar_segundo <- function(segundos){
 }
 #Formatando a coluana duracao_passeio
 cyclistic_april_to_april_no_null$duracao_passeio <- formatar_segundo(duracao_passeio_v2)
-
-
