@@ -78,11 +78,11 @@ print(numero_de_linhas1) #3826978
 
 #Verificando quais linhas tem valor null. Vai retornar os indices das linhas com valor null
 which(rowSums(is.na(cyclistic_april_to_april))> 0)
-print(linhas_nulas)
+
 
 cyclistic_april_to_april_no_null <- na.omit(cyclistic_april_to_april)
-linhas_nulas_v2 <- which(rowSums(is.na(cyclistic_april_to_april_no_null))>0)
-print(linhas_nulas_v2) #0
+which(rowSums(is.na(cyclistic_april_to_april_no_null))>0)
+#0
 
 nrow(cyclistic_april_to_april_no_null)
 #3592898
@@ -93,10 +93,9 @@ cyclistic_april_to_april_no_null %>%
          start_station_id, end_station_name, end_station_id, start_lat, start_lng, member_casual) %>% 
   filter(!complete.cases(.))
 
-#Tornando a visualização mais fácil 
+#Tornando a visualização mais fácil. Vai converter os diferentes tipos de objetos em tibbles. 
+#Vai imprimir apenas as 10 primeiras linhas.
 as_tibble(cyclistic_april_to_april_no_null)
-
-head(cyclistic_april_to_april_no_null$data)
 
 #Criando a coluna comeco_passeio
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
@@ -146,7 +145,8 @@ duracao_passeio_v2 <- subset(as.numeric(duracao_passeio_v2), duracao_passeio_v2 
 
 # Criando a coluna "data" a partir da coluna "started_at"
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% mutate(data = as.Date(started_at))
-
+head(cyclistic_april_to_april_no_null$data)
+str(cyclistic_april_to_april_no_null$data) #Date
 
 #Dia da semana. Criando a coluna dia_semana
 cyclistic_april_to_april_no_null <- cyclistic_april_to_april_no_null %>% 
@@ -240,7 +240,7 @@ ggplot(data = tabela_freq_member, aes(x= weekdays, y= frequencia, fill=frequenci
 ggplot(data = cyclistic_april_to_april_no_null, aes(x = dia_semana, fill = member_casual))+
   geom_bar(position = "dodge")+
   scale_y_continuous(labels = scales::comma)+
-  labs(title = "Demanda de cada usuário por dia da semana", x = "Dia da semana", y = "NUmero de Passeios", fill = "Tipo de Ciclista", caption="Dados coletados por Rafael Brendo")+
+  labs(title = "Demanda de cada usuário por dia da semana", x = "Dia da semana", y = "Numero de Passeios", fill = "Tipo de Ciclista", caption="Dados coletados por Rafael Brendo")+
   theme_minimal()
 
 #Horario de cada passeio por usuário
