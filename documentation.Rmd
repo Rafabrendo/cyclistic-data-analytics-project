@@ -1,8 +1,0 @@
----
-title: "documentation cyclistic"
-author: "Rafael"
-date: "2024-01-30"
-output: html_document
----
-
-## Documentação do projeto de conclusão de curso do Google
