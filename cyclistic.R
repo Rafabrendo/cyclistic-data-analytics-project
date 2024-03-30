@@ -250,13 +250,18 @@ ggplot(data = cyclistic_april_to_april_no_null, aes(x = hora, fill = member_casu
   labs(x = "Hora", y = "Contagem")+
   theme_minimal()
 
-media_membro_dia_da_semana_km__percorrido <- aggregate(km_percorridos ~ dia_semana + member_casual, data = cyclistic_april_to_april_no_null, FUN = mean)  
+media_membro_dia_da_semana_km__percorrido <- aggregate(km_percorridos ~ member_casual, data = cyclistic_april_to_april_no_null, FUN = mean)  
+print(media_membro_dia_da_semana_km__percorrido)
+#aggregate(km_percorridos ~ dia_semana + member_casual, data = cyclistic_april_to_april_no_null, FUN = mean)  
 #Media de Km percorridos por tipo de usuário
-ggplot(data = media_membro_dia_da_semana_km__percorrido, aes(x = dia_semana, y = km_percorridos, fill = member_casual))+
-  geom_bar(stat = "identity", position = "dodge")+
-  scale_y_continuous(labels = scales::comma)+
-  labs(x = "Dia da semana", y = "Km percorridos", title = "Média de km percorridos por dia da semana", fill= "Tipo de Ciclista")+
-  theme_minimal()
+ggplot(data = media_membro_dia_da_semana_km__percorrido, aes(x = member_casual, y = km_percorridos, fill = member_casual)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(y = "Média de Km percorridos", x = "Tipo de Ciclista", title = "Média de km percorridos por tipo de usuário") +
+  theme_minimal() +
+  theme(legend.position = "none") +  # Remover a legenda porque as cores são autoexplicativas
+  scale_fill_manual(values = c("#66c2a5", "#fc8d62"))  # Escolha de cores mais distintas
+
 
 #Km percorridos por tipo de usuário
 ggplot(data = cyclistic_april_to_april_no_null, aes(x = dia_semana, y = km_percorridos, fill = member_casual))+

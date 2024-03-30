@@ -1,6 +1,6 @@
 # Estudo de Caso
-<img></img>
-## Análise de dados sobre como os ciclistas casuais e os membros anuais utilizam as bicicletas da Cyclistic de forma diferente
+
+## Análise do Comportamento de Uso dos Ciclistas Casuais e Membros Anuais da Cyclistic
 
 Autor: Rafael Brendo <br>
 Apresentação em modo Storytelling
@@ -13,6 +13,9 @@ Apresentação em modo Storytelling
 <a href="#processamento">Processamento e Limpeza</a><br>
 <a href="#tarefa">Tarefa de Negócios</a><br>
 <a href="#ferramentas">Ferramentas Utilizadas</a><br>
+<a href="#visualizacao">Visualização e Análise</a><br>
+<a href="#conclusao">Conclusão</a><br>
+<a href="#recomendacao">Recomendações</a><br>
 
 
 
@@ -58,3 +61,65 @@ Eu sou um analista de dados júnior que trabalha na equipe de analistas de marke
 <h2 id="ferramentas">Ferramentas Utilizadas</h2>
 <li>Foi utilizado a linguagem <b>R</b> e o <b>RStudio</b> em todo o processo de limpeza, processamento e visualização dos dados, porque são ferramentas com grande facilidade de uso e manipulação.
 
+<h2 id="visualizacao">Visualização e analise</h2>
+<img src="graficos/percentualCiclista.png" alt="percentual de ciclistas"></img>
+<h3>Análise:</h3>
+<li>59.36% dos ciclistas são membros.
+<li>40.64% do ciclistas, são ciclistas casuais.
+
+<br>
+<img src="graficos/mediaDeDuracaodoPasseioPorTipo.png">
+<h3>Análise</h3>
+<li>O gráfico demonstra a média de duração do passeio por tipo de ciclista. Nota-se que os ciclistas casuais tem maior média de duração do passeio.
+
+<br>
+<img src="graficos/mediaDeDuracaodoPasseio.png" alt="Media de duracao do passeio"> 
+<h3>Analise</h3>
+<li>O gráfico representa a média de duração do passeio, por tipo de ciclista, para cada dia da semana. Demonstrando que os ciclistas casuais tem maior tempo de duração em seus passeios, como já visto anteriormente.
+
+<br>
+<img src="graficos/DemandaPorDiaDaSemana.png">
+<h3>Análise</h3>
+<li> O gráfico representa o número de passeios por dia da semana, para cada usuário. 
+<li>Os dias mais com maior número de passeios, tanto para membros, como para casuais, são: Sábado e Domingo.
+<li>Nota-se que o número de passeio para membros fica acima dos 200 mil, independente do dia da semana. 
+
+<br>
+<div style="display: flex; justify-content: space-between; width: 100vw">
+    <img src="graficos/freqDeUsoCasuais.png" style="width: 47vw; ">
+    <img src="graficos/freqDeUsoMembros.png" style="width: 47vw; ">
+</div>
+<h3>Análise</h3>
+<li> Os gráficos representam a frequência de uso dos equipamentos da Cyclistic por dia da semana.
+<li>Ao analisar os dois gráficos, nota-se que os usuários membros são mais frequentes.
+
+<br>
+<img src="graficos/HorarioDeCadaPasseioPorUsuario.png">
+<h3>Análise</h3>
+<li>O gráfico representa os horarios do dia e qual a sua requisição por ciclistas membros e ciclistas casuais.
+<li>Os horários de maior uso das bicicletas estão entre 10 - 20h.
+
+<br>
+<img src="graficos/kmPercorridosPorTipoDeUsuario.png">
+<h3>Análise</h3>
+<li>O gráfico representa a quantidade de quilômetros percorridos por dia da semana.
+<li>Nota-se que a quantidade de quilômetros percorridos pelos usuários casuais são maiores, tendo seu máximo no sábado, porém, na sexta-feira tem-se um contraste, com usuários membros tendo o seu pico na quantidade de quilômetros percorridos.
+
+
+<br>
+<img src="graficos/mediaDeKmPercorridos.png">
+<h3>Análise</h3>
+<li>O gráfico representa a média de quilômetros percorridos por tipo de usuário.
+<li>Nota-se que os usuários membros tem maior média, em relação aos usuários não membros.
+
+<br>
+<h1 id="conclusao">Conclusão</h1>
+<p>A Cyclistic tem grande potência de crescimento que pode ser via conversão dos ciclistas casuais em membros. Na análise e visualização nota-se que os membros tem maior participação nos lucros das empresas, eles tem maior frequeência e demanda para a utilização dos equipamentos da Cyclistic. Entretanto, ha um contraste quando se compara a média de duração de passeios e a quantidade de quilômetros percorridos, demonstrando que os usuários casuais utilizam as bicicletas para diversos fins, e um deles pode ser para o lazer, como atividades mais longas, com alta duração e elevada quantidade de quilômetros percorridos</p>
+
+<h1 id="recomendacao">Recomendações</h1>
+<p>Essas análises fornecem uma compreensão mais profunda dos padrões de uso e comportamentos dos usuários da Cyclistic, o que pode ser útil para aprimorar estratégias de marketing, operações e serviços oferecidos pela empresa.</p>
+<li>O marketing pode criar estratégias com promoções e incentivos para encorajar os ciclistas casuais a se tornarem membros, destacando os benefícios exclusivos de se tornar um membro, como descontos em passeios frequentes ou vantagens de fidelidade.
+<li>Pode-se aprimorar a experiência do usuário para que a experiência,tanto no aplicativo quanto nos pontos de aluguel de bicicletas, seja conveniente e agradável. Isso pode incluir melhorias na interface do usuário, facilidade de reserva e pagamento, e manutenção de bicicletas de alta qualidade.
+<li>Pode se melhorar a qualidade e conforto das bicicletas para futuros membros, porque, como já notado os usuários casuais tem maior quantidade de quilômetros percorridos e maior quantidade de tempo de uso. Isso poderia fazer com que usuários casuais migrassem para usuários membros.
+<li>Implemente programas de fidelidade para recompensar os usuários mais frequentes e engajados. Ofereça pontos ou descontos acumulados com base no número de passeios ou quilômetros percorridos, incentivando a utilização contínua do serviço.
+<li>Solicite feedback regular dos usuários para identificar áreas de melhoria e entender suas necessidades e preferências. Utilize esses insights para ajustar e aprimorar continuamente os serviços oferecidos pela Cyclistic.
